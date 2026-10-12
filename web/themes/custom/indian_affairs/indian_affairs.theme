@@ -2,10 +2,31 @@
 
 /**
  * @file
- * USWDS Base sub-theme.
- *
- * Place your custom PHP code in this file.
+ * Indian Affairs sub-theme functions.
  */
+
+/**
+ * Implements hook_theme().
+ */
+function indian_affairs_theme($existing, $type, $theme, $path) {
+  return [
+    'identifier' => [
+      'template' => 'uswds/identifier',
+      'variables' => [
+        'enabled' => TRUE,
+        'variant' => 'default',
+        'domain' => '',
+        'parents' => [],
+        'disclaimer_markup' => '',
+        'taxpayer_disclaimer' => FALSE,
+        'taxpayer_text' => '',
+        'required_links' => [],
+        'usagov_enabled' => TRUE,
+        'usagov_url' => 'https://www.usa.gov/',
+      ],
+    ],
+  ];
+}
 
 /**
  * Implements hook_preprocess().
@@ -16,3 +37,138 @@ function indian_affairs_preprocess(&$variables) {
   $variables['uswds_images'] = $variables['active_theme_path'] . '/assets/uswds/img/';
 }
 
+/**
+ * Implements hook_preprocess_page().
+ */
+function indian_affairs_preprocess_page(&$variables) {
+  $enabled = theme_get_setting('uswds_identifier_enabled');
+  if ($enabled === NULL) {
+    $enabled = TRUE;
+  }
+
+  if (!$enabled) {
+    $variables['identifier'] = NULL;
+    return;
+  }
+
+  $variant = theme_get_setting('uswds_identifier_variant') ?? 'default';
+
+  // Domain.
+  $domain = theme_get_setting('uswds_identifier_domain');
+  if (empty($domain)) {
+    $domain = \Drupal::request()->getHost();
+  }
+
+  $agency_shortname = theme_get_setting('uswds_identifier_agency_shortname') ?? 'Indian Affairs';
+
+  // Helper to resolve logo paths.
+  $theme_path = base_path() . \Drupal::theme()->getActiveTheme()->getPath();
+  $default_logo = $theme_path . '/assets/uswds/img/circle-gray-20.svg';
+
+  $resolve_logo = function ($logo_path) use ($theme_path, $default_logo) {
+    if (empty($logo_path)) {
+      return $default_logo;
+    }
+    if (str_starts_with($logo_path, 'http://') || str_starts_with($logo_path, 'https://') || str_starts_with($logo_path, '//') || str_starts_with($logo_path, '/')) {
+      return $logo_path;
+    }
+    return $theme_path . '/' . ltrim($logo_path, '/');
+  };
+
+  $parent1_name = theme_get_setting('uswds_identifier_parent_name') ?? 'U.S. Department of the Interior';
+  $parent1_url = theme_get_setting('uswds_identifier_parent_url') ?? 'https://www.doi.gov';
+  $parent1_logo = $resolve_logo(theme_get_setting('uswds_identifier_parent_logo'));
+  $parent1_alt = theme_get_setting('uswds_identifier_parent_logo_alt') ?: ($parent1_name . ' logo');
+
+  $parents = [];
+  $parents[] = [
+    'name' => $parent1_name,
+    'url' => $parent1_url,
+    'logo' => $parent1_logo,
+    'logo_alt' => $parent1_alt,
+  ];
+
+  if ($variant === 'multiple') {
+    $parent2_name = theme_get_setting('uswds_identifier_parent2_name') ?? 'Bureau of Indian Affairs';
+    $parent2_url = theme_get_setting('uswds_identifier_parent2_url') ?? 'https://www.bia.gov';
+    $parent2_logo = $resolve_logo(theme_get_setting('uswds_identifier_parent2_logo'));
+    $parent2_alt = theme_get_setting('uswds_identifier_parent2_logo_alt') ?: ($parent2_name . ' logo');
+
+    if (!empty($parent2_name)) {
+      $parents[] = [
+        'name' => $parent2_name,
+        'url' => $parent2_url,
+        'logo' => $parent2_logo,
+        'logo_alt' => $parent2_alt,
+      ];
+    }
+
+    $parent3_name = theme_get_setting('uswds_identifier_parent3_name');
+    if (!empty($parent3_name)) {
+      $parent3_url = theme_get_setting('uswds_identifier_parent3_url') ?? '#';
+      $parent3_logo = $resolve_logo(theme_get_setting('uswds_identifier_parent3_logo'));
+      $parent3_alt = theme_get_setting('uswds_identifier_parent3_logo_alt') ?: ($parent3_name . ' logo');
+      $parents[] = [
+        'name' => $parent3_name,
+        'url' => $parent3_url,
+        'logo' => $parent3_logo,
+        'logo_alt' => $parent3_alt,
+      ];
+    }
+  }
+
+  // Build identity disclaimer markup.
+  $parent_links = [];
+  foreach ($parents as $p) {
+    $parent_links[] = '<a href="' . htmlspecialchars($p['url'], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($p['name'], ENT_QUOTES, 'UTF-8') . '</a>';
+  }
+
+  if (count($parent_links) === 1) {
+    $disclaimer_markup = ' ' . $parent_links[0];
+  }
+  elseif (count($parent_links) === 2) {
+    $disclaimer_markup = ' ' . $parent_links[0] . ' and the ' . $parent_links[1];
+  }
+  else {
+    $last = array_pop($parent_links);
+    $disclaimer_markup = ' ' . implode(', ', $parent_links) . ', and the ' . $last;
+  }
+
+  // Required links.
+  $links = [
+    'about' => t('About @agency', ['@agency' => $agency_shortname]),
+    'accessibility' => t('Accessibility statement'),
+    'foia' => t('FOIA requests'),
+    'nofear' => t('No FEAR Act data'),
+    'oig' => t('Office of the Inspector General'),
+    'performance' => t('Performance reports'),
+    'privacy' => t('Privacy policy'),
+  ];
+  $required_links = [];
+  foreach ($links as $key => $title) {
+    $url = theme_get_setting('uswds_identifier_link_' . $key) ?? ('#' . $key);
+    $required_links[] = [
+      'title' => $title,
+      'url' => $url,
+    ];
+  }
+
+  $usagov_enabled = theme_get_setting('uswds_identifier_usagov_enabled');
+  if ($usagov_enabled === NULL) {
+    $usagov_enabled = TRUE;
+  }
+
+  $variables['identifier'] = [
+    '#theme' => 'identifier',
+    '#enabled' => $enabled,
+    '#variant' => $variant,
+    '#domain' => $domain,
+    '#parents' => $parents,
+    '#disclaimer_markup' => $disclaimer_markup,
+    '#taxpayer_disclaimer' => (bool) theme_get_setting('uswds_identifier_taxpayer_disclaimer'),
+    '#taxpayer_text' => theme_get_setting('uswds_identifier_taxpayer_text') ?? 'Produced and published at taxpayer expense.',
+    '#required_links' => $required_links,
+    '#usagov_enabled' => (bool) $usagov_enabled,
+    '#usagov_url' => theme_get_setting('uswds_identifier_usagov_url') ?? 'https://www.usa.gov/',
+  ];
+}

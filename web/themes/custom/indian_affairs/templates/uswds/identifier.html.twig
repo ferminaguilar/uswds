@@ -1,0 +1,76 @@
+{#
+/**
+ * @file
+ * USWDS Identifier component template.
+ *
+ * Variables:
+ * - enabled: boolean
+ * - variant: 'default' | 'multiple'
+ * - domain: string
+ * - parents: array of parent items (name, url, logo, logo_alt)
+ * - disclaimer_markup: safe HTML for identity links
+ * - taxpayer_disclaimer: boolean
+ * - taxpayer_text: string
+ * - required_links: array of items (title, url)
+ * - usagov_enabled: boolean
+ * - usagov_url: string
+ */
+#}
+{% if enabled %}
+<div class="usa-identifier">
+  <section class="usa-identifier__section usa-identifier__section--masthead" aria-label="Agency identifier">
+    <div class="usa-identifier__container">
+      {% if parents %}
+        <div class="usa-identifier__logos">
+          {% for parent in parents %}
+            {% if parent.logo %}
+              <a href="{{ parent.url }}" class="usa-identifier__logo">
+                <img
+                  class="usa-identifier__logo-img"
+                  src="{{ parent.logo }}"
+                  alt="{{ parent.logo_alt ? parent.logo_alt : parent.name ~ ' logo' }}"
+                  role="img" />
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      <section class="usa-identifier__identity" aria-label="Agency description">
+        {% if domain %}
+          <p class="usa-identifier__identity-domain">{{ domain }}</p>
+        {% endif %}
+        <p class="usa-identifier__identity-disclaimer">
+          <span aria-hidden="true">An </span>official website of the
+          {{ disclaimer_markup|raw }}
+          {%- if taxpayer_disclaimer %}
+            . {{ taxpayer_text|default('Produced and published at taxpayer expense.') }}
+          {%- endif -%}
+        </p>
+      </section>
+    </div>
+  </section>
+  {% if required_links %}
+    <nav class="usa-identifier__section usa-identifier__section--required-links" aria-label="Important links">
+      <div class="usa-identifier__container">
+        <ul class="usa-identifier__required-links-list">
+          {% for item in required_links %}
+            {% if item.url %}
+              <li class="usa-identifier__required-links-item">
+                <a href="{{ item.url }}" class="usa-identifier__required-link usa-link">{{ item.title }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </nav>
+  {% endif %}
+  {% if usagov_enabled %}
+    <section class="usa-identifier__section usa-identifier__section--usagov" aria-label="U.S. government information and services">
+      <div class="usa-identifier__container">
+        <div class="usa-identifier__usagov-description">Looking for U.S. government information and services?</div>
+        <a href="{{ usagov_url|default('https://www.usa.gov/') }}" class="usa-link">Visit USA.gov</a>
+      </div>
+    </section>
+  {% endif %}
+</div>
+{% endif %}
