@@ -22,7 +22,6 @@
         "drupal/core-recommended": "^11.4",
         "drupal/entity_reference_revisions": "^1.14",
         "drupal/paragraphs": "^1.23",
-        "drupal/ui_suite_uswds_paragraphs": "^4.0",
         "drupal/uswds_base": "^3.12",
         "drupal/uswds_ckeditor_integration": "^4.0",
         "drupal/viewsreference": "^2.0@beta",
