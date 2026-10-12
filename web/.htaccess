@@ -74,11 +74,6 @@ AddType image/webp .webp
   # even when running as CGI or FastCGI.
   RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-  # Redirect any direct request with /uswds/web to /uswds
-  RewriteCond %{THE_REQUEST} /uswds/web/([^\s\?]*) [NC]
-  RewriteRule ^ /uswds/%1 [R=301,L]
-
-
   # Block access to "hidden" directories whose names begin with a period. This
   # includes directories used by version control systems such as Subversion or
   # Git to store control files. Files whose names begin with a period, as well
@@ -115,7 +110,7 @@ AddType image/webp .webp
   # VirtualDocumentRoot and the rewrite rules are not working properly.
   # For example if your site is at http://example.com/drupal uncomment and
   # modify the following line:
-  # RewriteBase /drupal
+  RewriteBase /uswds
   #
   # If your site is running in a VirtualDocumentRoot at http://example.com/,
   # uncomment the following line:

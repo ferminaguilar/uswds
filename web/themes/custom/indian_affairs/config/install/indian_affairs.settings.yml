@@ -42,7 +42,6 @@ uswds_menu_bypass:
 uswds_identifier_enabled: 1
 uswds_identifier_variant: 'default'
 uswds_identifier_domain: ''
-uswds_identifier_agency_shortname: 'Indian Affairs'
 uswds_identifier_parent_name: 'U.S. Department of the Interior'
 uswds_identifier_parent_url: 'https://www.doi.gov'
 uswds_identifier_parent_logo: ''
@@ -57,14 +56,7 @@ uswds_identifier_parent3_logo: ''
 uswds_identifier_parent3_logo_alt: ''
 uswds_identifier_taxpayer_disclaimer: 0
 uswds_identifier_taxpayer_text: 'Produced and published at taxpayer expense.'
-uswds_identifier_required_links_source: 'manual'
-uswds_identifier_required_links_menu: ''
-uswds_identifier_link_about: '#about'
-uswds_identifier_link_accessibility: '#accessibility'
-uswds_identifier_link_foia: '#foia'
-uswds_identifier_link_nofear: '#no-fear-act'
-uswds_identifier_link_oig: '#oig'
-uswds_identifier_link_performance: '#performance'
-uswds_identifier_link_privacy: '#privacy'
+uswds_identifier_required_links_menu: 'identifier'
 uswds_identifier_usagov_enabled: 1
 uswds_identifier_usagov_url: 'https://www.usa.gov/'
+

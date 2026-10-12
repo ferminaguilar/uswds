@@ -59,8 +59,6 @@ function indian_affairs_preprocess_page(&$variables) {
     $domain = \Drupal::request()->getHost();
   }
 
-  $agency_shortname = theme_get_setting('uswds_identifier_agency_shortname') ?? 'Indian Affairs';
-
   // Helper to resolve logo paths.
   $theme_path = base_path() . \Drupal::theme()->getActiveTheme()->getPath();
   $default_logo = $theme_path . '/assets/uswds/img/circle-gray-20.svg';
@@ -134,57 +132,33 @@ function indian_affairs_preprocess_page(&$variables) {
     $disclaimer_markup = ' ' . implode(', ', $parent_links) . ', and the ' . $last;
   }
 
-  // Required links.
-  $links_source = theme_get_setting('uswds_identifier_required_links_source') ?? 'manual';
+  // Required links from selected Drupal menu.
   $required_links = [];
-
-  if ($links_source === 'menu') {
-    $menu_name = theme_get_setting('uswds_identifier_required_links_menu');
-    if (!empty($menu_name) && \Drupal::hasService('menu.link_tree')) {
-      $menu_tree = \Drupal::menuTree();
-      $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
-      $parameters->onlyEnabledLinks();
-      $tree = $menu_tree->load($menu_name, $parameters);
-      $manipulators = [
-        ['callable' => 'menu.default_tree_manipulators:checkAccess'],
-        ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
-      ];
-      $tree = $menu_tree->transform($tree, $manipulators);
-
-      foreach ($tree as $item) {
-        if ($item->link->isEnabled()) {
-          try {
-            $url = $item->link->getUrlObject()->toString();
-          }
-          catch (\Exception $e) {
-            $url = '#';
-          }
-          $required_links[] = [
-            'title' => $item->link->getTitle(),
-            'url' => $url,
-          ];
-        }
-      }
-    }
-  }
-
-  // If no menu links found or source is manual, use manual links.
-  if (empty($required_links)) {
-    $links = [
-      'about' => t('About @agency', ['@agency' => $agency_shortname]),
-      'accessibility' => t('Accessibility statement'),
-      'foia' => t('FOIA requests'),
-      'nofear' => t('No FEAR Act data'),
-      'oig' => t('Office of the Inspector General'),
-      'performance' => t('Performance reports'),
-      'privacy' => t('Privacy policy'),
+  $menu_name = theme_get_setting('uswds_identifier_required_links_menu') ?: 'identifier';
+  if (!empty($menu_name) && \Drupal::hasService('menu.link_tree')) {
+    $menu_tree = \Drupal::menuTree();
+    $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
+    $parameters->onlyEnabledLinks();
+    $tree = $menu_tree->load($menu_name, $parameters);
+    $manipulators = [
+      ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+      ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
     ];
-    foreach ($links as $key => $title) {
-      $url = theme_get_setting('uswds_identifier_link_' . $key) ?? ('#' . $key);
-      $required_links[] = [
-        'title' => $title,
-        'url' => $url,
-      ];
+    $tree = $menu_tree->transform($tree, $manipulators);
+
+    foreach ($tree as $item) {
+      if ($item->link->isEnabled()) {
+        try {
+          $url = $item->link->getUrlObject()->toString();
+        }
+        catch (\Exception $e) {
+          $url = '#';
+        }
+        $required_links[] = [
+          'title' => $item->link->getTitle(),
+          'url' => $url,
+        ];
+      }
     }
   }
 
