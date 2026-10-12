@@ -57,6 +57,8 @@ uswds_identifier_parent3_logo: ''
 uswds_identifier_parent3_logo_alt: ''
 uswds_identifier_taxpayer_disclaimer: 0
 uswds_identifier_taxpayer_text: 'Produced and published at taxpayer expense.'
+uswds_identifier_required_links_source: 'manual'
+uswds_identifier_required_links_menu: ''
 uswds_identifier_link_about: '#about'
 uswds_identifier_link_accessibility: '#accessibility'
 uswds_identifier_link_foia: '#foia'

@@ -219,6 +219,49 @@ function indian_affairs_form_system_theme_settings_alter(&$form, FormStateInterf
     ],
   ];
 
+  $form['identifier_settings']['required_links']['uswds_identifier_required_links_source'] = [
+    '#type' => 'radios',
+    '#title' => t('Links Source'),
+    '#description' => t('Choose whether to configure links manually here or select a Drupal menu.'),
+    '#options' => [
+      'manual' => t('Manual URL links (enter below)'),
+      'menu' => t('Drupal Menu (select an existing menu)'),
+    ],
+    '#default_value' => theme_get_setting('uswds_identifier_required_links_source') ?? 'manual',
+  ];
+
+  // Load available Drupal menus.
+  $menu_options = ['' => t('- Select a menu -')];
+  if (\Drupal::hasService('entity_type.manager')) {
+    $menus = \Drupal::entityTypeManager()->getStorage('menu')->loadMultiple();
+    foreach ($menus as $id => $menu) {
+      $menu_options[$id] = $menu->label();
+    }
+  }
+
+  $form['identifier_settings']['required_links']['uswds_identifier_required_links_menu'] = [
+    '#type' => 'select',
+    '#title' => t('Select Drupal Menu'),
+    '#description' => t('Select a menu to populate the identifier links. Links will automatically render with official USWDS styling and accessibility markup.'),
+    '#options' => $menu_options,
+    '#default_value' => theme_get_setting('uswds_identifier_required_links_menu') ?? '',
+    '#states' => [
+      'visible' => [
+        ':input[name="uswds_identifier_required_links_source"]' => ['value' => 'menu'],
+      ],
+    ],
+  ];
+
+  $form['identifier_settings']['required_links']['manual_links'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Manual Link URLs'),
+    '#states' => [
+      'visible' => [
+        ':input[name="uswds_identifier_required_links_source"]' => ['value' => 'manual'],
+      ],
+    ],
+  ];
+
   $links = [
     'about' => ['title' => t('About [Agency] Link URL'), 'default' => '#about'],
     'accessibility' => ['title' => t('Accessibility Statement URL'), 'default' => '#accessibility'],
@@ -230,7 +273,7 @@ function indian_affairs_form_system_theme_settings_alter(&$form, FormStateInterf
   ];
 
   foreach ($links as $key => $info) {
-    $form['identifier_settings']['required_links']['uswds_identifier_link_' . $key] = [
+    $form['identifier_settings']['required_links']['manual_links']['uswds_identifier_link_' . $key] = [
       '#type' => 'textfield',
       '#title' => $info['title'],
       '#default_value' => theme_get_setting('uswds_identifier_link_' . $key) ?? $info['default'],
