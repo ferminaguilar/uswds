@@ -1,0 +1,36 @@
+# Composer managed dependencies and core
+/vendor/
+/web/core/
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+/web/libraries/
+
+# User uploads and generated files
+/web/sites/*/files/
+/web/sites/*/private/
+/web/sites/simpletest/
+
+# Drupal settings (sensitive info)
+/web/sites/*/settings*.php
+!/web/sites/default/default.settings.php
+/web/sites/*/services*.yml
+!/web/sites/default/default.services.yml
+
+# Node / Frontend build artifacts
+node_modules/
+**/node_modules/
+.sass-cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE & OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+Thumbs.db
+.idea/
+.vscode/
+*.code-workspace

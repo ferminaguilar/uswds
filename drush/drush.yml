@@ -1,0 +1,3 @@
+# Drush site configuration
+options:
+  uri: 'http://localhost/uswds'
