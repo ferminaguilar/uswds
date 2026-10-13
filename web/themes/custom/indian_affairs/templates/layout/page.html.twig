@@ -265,15 +265,16 @@
         <div class="grid-container">
           <div class="grid-row grid-gap">
             {% if display_footer_agency %}
-            <div
-              class="usa-footer__logo grid-row mobile-lg:grid-col-6 mobile-lg:grid-gap-2">
-
               {% if footer_agency_url %}
-              <a href="{{ footer_agency_url }}">
+              <a href="{{ footer_agency_url }}"
+                 class="usa-footer__logo grid-row mobile-lg:grid-col-6 mobile-lg:grid-gap-2 flex-align-center text-no-underline text-ink">
+              {% else %}
+              <div
+                class="usa-footer__logo grid-row mobile-lg:grid-col-6 mobile-lg:grid-gap-2 flex-align-center">
               {% endif %}
 
                 {% if footer_agency_logo %}
-                  <div class="mobile-lg:grid-col-auto">
+                  <div class="grid-col-auto">
                     <img class="usa-footer__logo-img"
                          src="{{ footer_agency_logo }}"
                          alt="{{ 'Agency logo'|t }}">
@@ -281,7 +282,7 @@
                 {% endif %}
 
                 {% if footer_agency_name %}
-                  <div class="mobile-lg:grid-col-auto">
+                  <div class="grid-col-auto">
                     <p
                       class="usa-footer__logo-heading">{{ footer_agency_name }}</p>
                   </div>
@@ -289,9 +290,9 @@
 
               {% if footer_agency_url %}
               </a>
+              {% else %}
+              </div>
               {% endif %}
-
-            </div>
 
             {% if not footer_slim %}
               <div class="usa-footer__contact-links desktop:grid-col-6">

@@ -21,3 +21,17 @@ i.e.
 */
 
 @use "uswds-core" as *;
+
+// Ensure footer logo and agency name are always inline and vertically aligned.
+.usa-footer__logo {
+  text-decoration: none;
+
+  &,
+  a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+  }
+}
