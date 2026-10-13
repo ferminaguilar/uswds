@@ -112,6 +112,10 @@ AddType image/webp .webp
   # modify the following line:
   RewriteBase /uswds
   #
+  # Redirect any direct request with /uswds/web to /uswds
+  RewriteCond %{THE_REQUEST} \s/+uswds/web/([^\s?]*) [NC]
+  RewriteRule ^ /uswds/%1 [R=301,L]
+
   # If your site is running in a VirtualDocumentRoot at http://example.com/,
   # uncomment the following line:
   # RewriteBase /
